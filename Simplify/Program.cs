@@ -15,7 +15,8 @@ namespace GeminiCLI
             string modelName = "gemini-1.5-flash-001";
             //string credentialsPath = "\\\\wsl.localhost\\Ubuntu\\home\\alexo\\.config\\gcloud\\application_default_credentials.json";
 
-            string prompt = "Using the clients information, tell me about the client and waht their needs are."; // Take input as command-line arguments
+            //string prompt = "Using the clients information, tell me about the client and waht their needs are."; // Take input as command-line arguments
+            string prompt = "Assume today is 2023-09-21 and I have just finished the shift for the day.  Summerize for me what I did on my shift.  Include any relevant information about how this relates to previous shifts.  Include any information to consider for future shifts.  Present the information in a conversational tone.  The voice of the response should be from me, the caregiver.";
 
             // Create client
             var predictionServiceClient = new PredictionServiceClientBuilder
@@ -45,7 +46,11 @@ namespace GeminiCLI
                                 Parts =
                                 {
                                     new Part { Text = prompt },
-                                    new Part { Text = "Notes on data - Below are the clients records.  Patient and client are interchangable terms.  Shifts and visits are the same thing.  A patient can have multiple shifts and each shift can have multiple tasks."},
+                                    new Part { Text = "Notes on data - Below are the clients records that contain past shifts and activities done on those shifts." },
+                                    new Part { Text = "Patient and client are interchangable terms." },
+                                    new Part { Text = "Shifts and visits are the same thing." },
+                                    new Part { Text = "A patient can have multiple shifts and each shift can have multiple tasks." },
+                                    new Part { Text = "The most recent shift is the one that has been completed today." },
                                     //new Part { Text = clientdata},
                                     new Part { FileData = new FileData { FileUri = "gs://ai-innovate-improve-docs/client-3064655.json", MimeType = "text/plain" } }
                                     // add a part that is a reference to gs://ai-innovate-improve-docs/client-3064655.json
