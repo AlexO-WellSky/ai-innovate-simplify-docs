@@ -13,10 +13,11 @@ namespace GeminiCLI
             string location = "us-central1";
             string publisher = "google";
             string modelName = "gemini-1.5-flash-001";
+
             //string credentialsPath = "\\\\wsl.localhost\\Ubuntu\\home\\alexo\\.config\\gcloud\\application_default_credentials.json";
 
             //string prompt = "Using the clients information, tell me about the client and waht their needs are."; // Take input as command-line arguments
-            string prompt = "Assume today is 2023-09-21 and I have just finished the shift for the day.  Summerize for me what I did on my shift.  Include any relevant information about how this relates to previous shifts.  Include any information to consider for future shifts.  Present the information in a conversational tone.  The voice of the response should be from me, the caregiver.";
+            string prompt = "Provide a summary";
 
             // Create client
             var predictionServiceClient = new PredictionServiceClientBuilder
@@ -25,7 +26,7 @@ namespace GeminiCLI
             }.Build();
 
             // Read a JSON file into a string
-            string clientdata = File.ReadAllText("../../../client-3064655.json");
+            string clientdata = File.ReadAllText("../../../client-3064659.json");
 
             // Initialize content request
             var generateContentRequest = new GenerateContentRequest
@@ -46,13 +47,24 @@ namespace GeminiCLI
                                 Parts =
                                 {
                                     new Part { Text = prompt },
-                                    new Part { Text = "Notes on data - Below are the clients records that contain past shifts and activities done on those shifts." },
-                                    new Part { Text = "Patient and client are interchangable terms." },
+                                    new Part { Text = "Assume today is 2023-09-21 and I have just finished the shift for the day." },
+                                    new Part { Text = "My caregiver_id is 7023201" },
+                                    new Part { Text = "Create a summary of what happened on my shift.  Include any relevant information about how this relates to previous shifts." },
+                                    new Part { Text = "Include any information to consider for future shifts, if any are scheduled, provided by me or another caregiver." },
+                                    new Part { Text = "Present the information in a conversational tone." },
+                                    new Part { Text = "The voice of the response should be from me, the caregiver, to be read by future caregivers as well as my manager." },
+                                    new Part { Text = "Attached JSON contains the client's records that contain past, current, and future shifts and tasks done on those shifts." },
+                                    new Part { Text = "Patient and client are interchangable terms, but use the term client in the summary." },
                                     new Part { Text = "Shifts and visits are the same thing." },
+                                    new Part { Text = "A shift can only be completed by the caregiver assigned to the shift." },
                                     new Part { Text = "A patient can have multiple shifts and each shift can have multiple tasks." },
-                                    new Part { Text = "The most recent shift is the one that has been completed today." },
-                                    //new Part { Text = clientdata},
-                                    new Part { FileData = new FileData { FileUri = "gs://ai-innovate-improve-docs/client-3064655.json", MimeType = "text/plain" } }
+                                    new Part { Text = "Summary must be clear and concise.  Don't be chatty." },
+                                    // this prompt doesn't seem to work...keep looking for tokens for client name and such
+                                    new Part { Text = "Mapping for shift status: 10 = SCHEDULED, 30 = COMPLETE, 40 = NOT_COMPLETE, 50 = CANCELLED BY CLIENT, 60 = CANCELLED BY CAREGIVER, 70 = CANCELLED BY CAREGIVER." },
+                                    //new Part { Text = "Mapping for shift status: SCHEDULED = 10, NOT_SCHEDULED = 20, COMPLETE = 30, NOT_COMPLETE = 40, CANCELLED_BY_CLIENT = 50, CANCELLED_BY_CAREGIVER = 60, CAREGIVER_NO_SHOW = 70, TENTATIVE = 80, ATTENTION_REQUIRED = 90, CAREGIVER_UNAVAILABILITY = 100, OPEN_SHIFT = 110, IN_PROGRESS = 120, PENDING_CONFIRMATION = 130." },
+
+                                    new Part { Text = clientdata},
+                                    //new Part { FileData = new FileData { FileUri = "gs://ai-innovate-improve-docs/client-3064655.json", MimeType = "text/plain" } }
                                     // add a part that is a reference to gs://ai-innovate-improve-docs/client-3064655.json
                                     
 
