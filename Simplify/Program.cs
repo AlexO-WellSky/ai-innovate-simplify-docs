@@ -9,14 +9,13 @@ namespace GeminiCLI
     {
         static async Task Main(string[] args)
         {
-            // Replace with your project ID, location, model name, and the path to your key file
             string projectId = "temp-a3r4ux9v-wsky";
             string location = "us-central1";
             string publisher = "google";
             //string modelName = "gemini-1.5-flash-001";
             string modelName = "gemini-1.5-pro";
 
-            string prompt = "Provide a summary";
+            string prompt = "I just completed my shift.  Provide a summary";
 
             // Create client
             var predictionServiceClient = new PredictionServiceClientBuilder
@@ -33,23 +32,17 @@ namespace GeminiCLI
                 "'clientdata', jsonb_build_object(" +
                 "'clients', (SELECT json_agg(c) FROM clients c WHERE ID = @patientId)," +
                 "'shifts', (SELECT json_agg(s) FROM shifts s   WHERE PATIENT_ID = @patientId)," +
-                "'tasks', (SELECT json_agg(s) FROM tasks s     WHERE CARE_LOG_ID in (SELECT ID FROM shifts WHERE PATIENT_ID = @patientId))" +
+                "'tasks', (SELECT json_agg(t) FROM tasks t     WHERE CARE_LOG_ID in (SELECT ID FROM shifts WHERE PATIENT_ID = @patientId))" +
                 "    )) AS result;";
 
-            // Create a connection to the database
+            // Pull client data
             using (var connection = new NpgsqlConnection("Host=localhost;Username=postgres;Password=postgres;Database=ai-innovate"))
             {
                 connection.Open();
-
-                // Create a command to execute the query
                 using (var command = new NpgsqlCommand(query, connection))
                 {
                     command.Parameters.AddWithValue("patientId", patientId);
-
-                    // Execute the query and get the result
                     var result = command.ExecuteScalar()?.ToString();
-
-                    // Print the result
                     clientdata = result?.ToString() ?? string.Empty;
                 }
             }
