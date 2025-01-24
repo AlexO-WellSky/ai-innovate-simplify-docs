@@ -16,6 +16,7 @@ namespace GeminiCLI
             //string modelName = "gemini-1.5-pro";
 
             string prompt = "Provide a summary of my visit.";
+            //string prompt = "Ask me questions about my visit";
 
             // Create client
             var predictionServiceClient = new PredictionServiceClientBuilder
